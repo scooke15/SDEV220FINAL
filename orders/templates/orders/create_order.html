@@ -1,0 +1,44 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+  <h2>Create an Order</h2>
+  <form method="post" id="orderForm">
+    {% csrf_token %}
+    {{ formset.management_form }}
+
+    <div id="formset-container">
+      {% for form in formset %}
+        <div class="formset-form">
+          Item: {{ form.item }} Quantity: {{ form.quantity }}
+          <button type="button" class="remove-form-btn">Remove</button>
+        </div>
+      {% endfor %}
+    </div>
+    <button type="button" id="add-more-btn">Add more items</button>
+    <button type="submit">Place Order</button>
+  </form>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const container = document.getElementById('formset-container');
+      const addButton = document.getElementById('add-more-btn');
+      const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+
+      addButton.addEventListener('click', function() {
+        const newForm = container.children[0].cloneNode(true);
+        const formRegex = RegExp(`form-(\\d){1}-`, 'g');
+
+        totalForms.value = parseInt(totalForms.value) + 1;
+        newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${totalForms.value}-`);
+        container.appendChild(newForm);
+      });
+
+      container.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-form-btn')) {
+          e.target.parentNode.remove();
+          totalForms.value = parseInt(totalForms.value) - 1;
+        }
+      });
+    });
+  </script>
+{% endblock %}

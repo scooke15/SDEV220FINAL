@@ -1,0 +1,16 @@
+{% extends 'orders/base.html' %}
+
+{% block content %}
+  <h2>Manage Orders</h2>
+  <ul>
+    {% for order in orders %}
+      <li>
+        Order #{{ order.id }} - {{ order.customer.username }}
+        <form method="post" action="{% url 'complete_order' order.id %}">
+          {% csrf_token %}
+          <button type="submit">Mark as Completed</button>
+        </form>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
